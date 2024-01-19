@@ -30,7 +30,7 @@ setup(
     author_email="iam.minhokim@gmail.com",
     license="Apache License 2.0",
     packages=find_packages(),
-    install_requires=["spaceone-api"],
+    install_requires=["spaceone-api", "spaceone-inventory"],
     package_data={"plugin": ["metadata/*/*.yaml"]},
     zip_safe=False,
 )
