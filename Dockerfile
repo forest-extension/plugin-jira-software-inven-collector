@@ -6,7 +6,6 @@ ENV SPACEONE_PORT 50051
 ENV SERVER_TYPE grpc
 ENV PKG_DIR /tmp/pkg
 ENV SRC_DIR /tmp/src
-LABEL org.opencontainers.image.source=https://github.com/forest-extension/${REPO_NAME}
 
 RUN apt update && apt upgrade -y
 
