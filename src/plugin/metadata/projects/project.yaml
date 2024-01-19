@@ -1,0 +1,25 @@
+---
+search:
+  fields:
+    - Lead: data.lead.displayName
+    - Key: data.key
+    - Private: data.isPrivate
+    - Id: data.id
+    - Jira Project type: data.projectTypeKey
+    - Issue count: data.display_total_issue_count
+    - Issue type count: data.display_issue_type_count
+
+
+
+table:
+  sort:
+    key: data.name
+    desc: true
+  fields:
+    - Lead: data.lead.displayName
+    - Key: data.key
+    - Private: data.IsPrivate
+    - Id: data.id
+    - Project Type: data.projectTypeKey
+    - Issue count: data.display_total_issue_count
+

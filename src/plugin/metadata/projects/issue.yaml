@@ -1,0 +1,38 @@
+---
+search:
+  fields:
+    - Key: data.key
+    - Status: data.fields.status.name
+    - Jira Project name: data.fields.project.name
+    - Assignee: data.fields.assignee.displayName
+    - Issue type: data.fields.issuetype.name
+    - Priority: data.fields.priority.name
+    - Resolution: data.fields.resolution.name
+    - Resolution date: data.fields.resolutiondate
+    - Created at: data.fields.created
+    - Updated at: data.fields.updated
+    - Comment count: data.fields.comment.total
+    - Creator: data.fields.creator.displayName
+    - Reporter: data.fields.reporter.displayName
+    - Watcher count: data.fields.watches.watchCount
+
+table:
+  sort:
+    key: data.fields.created
+    desc: true
+  fields:
+    - Status: data.fields.status.name
+    - Project name: data.fields.project.name
+    - Assignee: data.fields.assignee.displayName
+    - Issue type: data.fields.issuetype.name
+    - Priority: data.fields.priority.name
+    - Resolution: data.fields.resolution.name
+    - Resolution date: data.fields.resolutiondate
+    - Created at: data.fields.created
+    - Updated at: data.fields.updated
+    - Comment count: data.fields.comment.total
+    - Creator: data.fields.creator.displayName
+    - Reporter: data.fields.reporter.displayName
+    - Watcher count: data.fields.watches.watchCount
+    - Key: data.key
+
