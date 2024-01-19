@@ -1,0 +1,1 @@
+# plugin-jira-software-inven-collector
