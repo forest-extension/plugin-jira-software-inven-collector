@@ -131,7 +131,7 @@ jobs:
           context: .
           platforms: ${{ env.ARCH }}
           push: true
-          tags: ${{ env.VERSION }}
+          tags: ${{ github.repository }}:${{ env.VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Notice when job fails
