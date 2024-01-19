@@ -64,6 +64,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
       - name: update version file # That is used where the master_push actions
         run: |
           echo ${{ env.VERSION }} > src/VERSION
