@@ -1,0 +1,90 @@
+name: "[Dispatch] Create Plugin Template"
+
+on:
+  workflow_dispatch:
+    inputs:
+      resource_type:
+        description: 'resource_type \n ex) (inventory.Collector, cost-analysis.DataSource, monitoring.Webhook, notification.Notification ...)'
+
+        required: true
+        default: 'inventory.Collector'
+      core-version:
+        description: 'core version'
+        required: true
+        default: '2.0'
+
+jobs:
+  owner_check:
+    if: github.repository_owner == 'forest-extension'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ github.repository_owner }}
+
+  template:
+    needs: owner_check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          token: ${{ secrets.PAT_TOKEN }}
+      - name: set git user
+        run: git config --global user.email admin@forest-extension
+
+      - name: set python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: set PAT_TOKEN env
+        run: echo "PAT_TOKEN=$(echo ${{ secrets.PAT_TOKEN }})" >> $GITHUB_ENV
+
+      - name: git clone actions repository
+        run: |
+          git clone https://github.com/forest-extension/actions.git
+
+      - name: install requirements
+        run: pip install --upgrade -r actions/pkg/pip_requirements.txt
+
+      - name: set REPO_NAME env
+        run: |
+          echo "REPO_NAME=$(echo ${{ github.repository }} | cut -d '/' -f2)" >> $GITHUB_ENV
+
+      - name: create template with topics
+        run: |
+          python actions/src/main.py template --dest ${{ env.REPO_NAME }} --resource-type ${{ github.event.inputs.resource_type }} --core-version ${{ github.event.inputs.core-version }}
+
+      - name: extract service from resource type to lower case
+        run: |
+          echo "PLUGIN_PACKAGE=$(echo ${{ github.event.inputs.resource_type }} | cut -d '.' -f1 | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: extract resource from resource type to lower case
+        run: |
+          echo "SPACEONE_RESOURCE=$(echo ${{ github.event.inputs.resource_type }} | cut -d '.' -f2 | sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\2/g'| tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: install spaceone package
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade spaceone-core
+          pip install --upgrade --pre spaceone-$PLUGIN_PACKAGE
+
+      - name: Use Environment Variable
+        # Replace '-' with '_' in the SERVICE environment variable
+        run: echo "SPACEONE_SERVICE=${PLUGIN_PACKAGE//-/_}" >> $GITHUB_ENV
+
+      - name: change directory to original repository
+        run: cd ..
+
+      - name: create plugin template
+        run: |
+          spaceone create-project -s spaceone.${{ env.SPACEONE_SERVICE }}.plugin.${{ env.SPACEONE_RESOURCE }}.skeleton src/plugin
+
+      - name: Push plugin template to master
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[CI] Plugin template has been built"
+          commit_user_name: forest-extension-admin
+          commit_user_email: admin@forest-extension
+          commit_author: forest-extension-admin <admin@forest-extension>
+          push_options: '--force'
+
