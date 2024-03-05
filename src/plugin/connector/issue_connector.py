@@ -20,7 +20,7 @@ class IssueConnector(JiraBaseConnector):
         params = {
             "jql": f"project = '{project_id_or_key}' AND created >= startOfYear(-1) order by created DESC",
             "startAt": 0,
-            "maxResults": 500,
+            "maxResults": 1000,
             "fields": [
                 "summary",
                 "comment",
