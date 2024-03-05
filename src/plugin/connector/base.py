@@ -58,9 +58,13 @@ class JiraBaseConnector(BaseConnector):
                 json=data,
             )
             response_json = response.json()
-            response_values = response_json.get("values")
+            if isinstance(response_json, list):
+                response_values = response_json
+            else:
+                response_values = response_json.get("values")
+
             _LOGGER.debug(
-                f"[dispatch_request] {url} {response.status_code} {response.reason}, {response_json.get('total')}"
+                f"[dispatch_request] {url} {response.status_code} {response.reason}"
             )
 
             if response.status_code != 200:
@@ -73,7 +77,11 @@ class JiraBaseConnector(BaseConnector):
             else:
                 responses.append(response_json)
 
-            if response_json.get("isLast", True) or response_json.get("isLast") is None:
+            if (
+                isinstance(response_json, list)
+                or response_json.get("isLast", True)
+                or response_json.get("isLast") is None
+            ):
                 break
             else:
                 url = response_json.get("nextPage")

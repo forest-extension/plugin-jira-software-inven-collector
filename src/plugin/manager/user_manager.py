@@ -1,21 +1,22 @@
 import logging
-
 from typing import Generator
 
 from plugin.connector.project_connector import ProjectConnector
+from plugin.connector.user_connector import UserConnector
 from plugin.manager.base import JiraBaseManager
 from spaceone.inventory.plugin.collector.lib import *
 
 _LOGGER = logging.getLogger("spaceone")
 
 
-class ProjectManager(JiraBaseManager):
+class MemberManager(JiraBaseManager):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.cloud_service_group = "Projects"
-        self.cloud_service_type = "Project"
-        self.metadata_path = "metadata/projects/project.yaml"
+        self.cloud_service_type = "Member"
+        self.metadata_path = "metadata/projects/user.yaml"
         self.project_connector = ProjectConnector()
+        self.role_connector = UserConnector()
 
     def collect(
         self, options: dict, secret_data: dict, schema: str
@@ -37,13 +38,14 @@ class ProjectManager(JiraBaseManager):
         tags = {
             "spaceone:icon": "https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/jira-icon.png"
         }
+
         cloud_service_type = make_cloud_service_type(
             name=self.cloud_service_type,
             group=self.cloud_service_group,
             provider=self.provider,
             metadata_path=self.metadata_path,
             is_primary=True,
-            is_major=True,
+            is_major=False,
             tags=tags,
         )
 
@@ -57,43 +59,34 @@ class ProjectManager(JiraBaseManager):
         # Return Cloud Service
         domain = secret_data["domain"]
         project_key = secret_data.get("project_key")
-        project_info = self.project_connector.get_project(secret_data, project_key)
 
-        total = self.project_connector.get_project_total_issue_count(
+        for user_info in self.role_connector.get_all_project_roles(
             secret_data, project_key
-        )
-
-        project_info.update(
-            {
-                "display_total_issue_count": total,
-                "display_issue_type_count": len(project_info.get("issueTypes", [])),
+        ):
+            reference = {
+                "resource_id": f"jira:{user_info['accountId']}",
+                "external_link": f"https://{domain}.atlassian.net/browse/{user_info['accountId']}",
             }
-        )
 
-        reference = {
-            "resource_id": f"jira:{project_info['id']}",
-            "external_link": f"https://{domain}.atlassian.net/browse/{project_info['key']}",
-        }
+            cloud_service = make_cloud_service(
+                name=user_info["displayName"],
+                cloud_service_type=self.cloud_service_type,
+                cloud_service_group=self.cloud_service_group,
+                provider=self.provider,
+                data=user_info,
+                reference=reference,
+                account=domain,
+            )
 
-        cloud_service = make_cloud_service(
-            name=project_info["name"],
-            cloud_service_type=self.cloud_service_type,
-            cloud_service_group=self.cloud_service_group,
-            provider=self.provider,
-            data=project_info,
-            reference=reference,
-            account=domain,
-        )
-
-        yield make_response(
-            cloud_service=cloud_service,
-            match_keys=[
-                [
-                    "reference.resource_id",
-                    "provider",
-                    "cloud_service_type",
-                    "cloud_service_group",
-                    "account",
-                ]
-            ],
-        )
+            yield make_response(
+                cloud_service=cloud_service,
+                match_keys=[
+                    [
+                        "reference.resource_id",
+                        "provider",
+                        "cloud_service_type",
+                        "cloud_service_group",
+                        "account",
+                    ]
+                ],
+            )

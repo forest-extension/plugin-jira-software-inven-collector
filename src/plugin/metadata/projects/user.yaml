@@ -1,0 +1,18 @@
+---
+search:
+  fields:
+  - Name: data.displayName
+  - Email: data.emailAddress
+  - Account Id: data.accountId
+  - Active: data.active
+
+
+table:
+  fields:
+    - Name: data.displayName
+    - Email: data.emailAddress
+    - Account Id: data.accountId
+    - Active: data.active
+    - Timezone: data.timeZone
+
+

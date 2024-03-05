@@ -1,3 +1,4 @@
+
 import logging
 
 from spaceone.core.service import *
@@ -157,3 +158,6 @@ def check_secret_data(secret_data: dict):
 
     if secret_data.get("api_token") is None:
         raise ERROR_REQUIRED_PARAMETER(key="secret_data.api_token")
+
+    if secret_data.get("project_key") is None:
+        raise ERROR_REQUIRED_PARAMETER(key="secret_data.project_key")

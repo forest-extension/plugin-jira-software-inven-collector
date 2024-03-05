@@ -57,35 +57,40 @@ class IssueManager(JiraBaseManager):
     def collect_cloud_service(self, options, secret_data, schema):
         # Return Cloud Service
         domain = secret_data["domain"]
-        for project_info in self.project_connector.get_projects(secret_data):
-            project_id_or_key = project_info["id"]
-            for issue_info in self.issue_connector.search_issue(
-                secret_data, project_id_or_key
-            ).get("issues", []):
-                reference = {
-                    "resource_id": f"jira:{issue_info['id']}",
-                    "external_link": f"https://{domain}.atlassian.net/browse/{issue_info['key']}",
-                }
+        project_key = secret_data.get("project_key")
 
-                cloud_service = make_cloud_service(
-                    name=issue_info["fields"]["summary"],
-                    cloud_service_type=self.cloud_service_type,
-                    cloud_service_group=self.cloud_service_group,
-                    provider=self.provider,
-                    data=issue_info,
-                    reference=reference,
-                    account=domain,
-                )
+        yield from self._list_issue_from_project(project_key, domain, secret_data)
 
-                yield make_response(
-                    cloud_service=cloud_service,
-                    match_keys=[
-                        [
-                            "reference.resource_id",
-                            "provider",
-                            "cloud_service_type",
-                            "cloud_service_group",
-                            "account",
-                        ]
-                    ],
-                )
+    def _list_issue_from_project(
+        self, project_key: str, domain: str, secret_data: dict
+    ):
+        for issue_info in self.issue_connector.search_issue(
+            secret_data, project_key
+        ).get("issues", []):
+            reference = {
+                "resource_id": f"jira:{issue_info['id']}",
+                "external_link": f"https://{domain}.atlassian.net/browse/{issue_info['key']}",
+            }
+
+            cloud_service = make_cloud_service(
+                name=issue_info["fields"]["summary"],
+                cloud_service_type=self.cloud_service_type,
+                cloud_service_group=self.cloud_service_group,
+                provider=self.provider,
+                data=issue_info,
+                reference=reference,
+                account=domain,
+            )
+
+            yield make_response(
+                cloud_service=cloud_service,
+                match_keys=[
+                    [
+                        "reference.resource_id",
+                        "provider",
+                        "cloud_service_type",
+                        "cloud_service_group",
+                        "account",
+                    ]
+                ],
+            )
