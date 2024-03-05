@@ -1,0 +1,38 @@
+name: "[Dispatch] Apply plugin workflows"
+
+on:
+  workflow_dispatch:
+    inputs:
+      dest:
+        description: 'target repository ({repository_name})'
+        required: true
+
+      workflow_type:
+        description: 'workflow_type ex) plugin'
+        required: true
+        default: 'plugin'
+
+jobs:
+  owner_check:
+    if: github.repository_owner == 'forest-extension'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ github.repository_owner }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: set git user
+        run: git config --global user.email admin@forest-extension
+      - name: set python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      - name: install requirements
+        run: pip install --upgrade -r pkg/pip_requirements.txt
+      - name: set PAT_TOKEN env
+        run: echo "PAT_TOKEN=$(echo ${{ secrets.PAT_TOKEN }})" >> $GITHUB_ENV
+      - name: apply workflows
+        run: |
+          python src/main.py actions --dest ${{ github.event.inputs.dest }} --workflow-type ${{ github.event.inputs.workflow_type }}
