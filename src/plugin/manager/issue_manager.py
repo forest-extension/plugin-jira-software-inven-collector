@@ -65,9 +65,8 @@ class IssueManager(JiraBaseManager):
     def _list_issue_from_project(
         self, project_key: str, domain: str, secret_data: dict
     ):
-        for issue_info in self.issue_connector.search_issue(
-            secret_data, project_key
-        ).get("issues", []):
+        response_stream = self.issue_connector.search_issue(secret_data, project_key)
+        for issue_info in response_stream:
             reference = {
                 "resource_id": f"jira:{issue_info['id']}",
                 "external_link": f"https://{domain}.atlassian.net/browse/{issue_info['key']}",
