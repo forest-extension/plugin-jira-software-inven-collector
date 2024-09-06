@@ -47,6 +47,7 @@ class MemberManager(JiraBaseManager):
             is_primary=True,
             is_major=False,
             tags=tags,
+            labels=["Management"],
         )
 
         yield make_response(

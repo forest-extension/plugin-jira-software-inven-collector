@@ -45,6 +45,7 @@ class ProjectManager(JiraBaseManager):
             is_primary=True,
             is_major=True,
             tags=tags,
+            labels=["Management"],
         )
 
         yield make_response(
