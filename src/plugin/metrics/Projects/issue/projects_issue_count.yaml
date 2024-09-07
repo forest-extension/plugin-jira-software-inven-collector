@@ -1,8 +1,8 @@
 ---
-metric_id: metric-jira-software-projects-issue-count
+metric_id: metric-jira-projects-issue-count
 name: Project Count
 metric_type: GAUGE
-resource_type: inventory.CloudService:jira_software.Projects.Issue
+resource_type: inventory.CloudService:jira.Projects.Issue
 query_options:
   group_by:
     - key: data.fields.project.name
@@ -20,5 +20,5 @@ query_options:
     value:
       operator: count
 unit: Count
-namespace_id: ns-jira-software-projects-issue
+namespace_id: ns-jira-projects-issue
 version: '1.0'
