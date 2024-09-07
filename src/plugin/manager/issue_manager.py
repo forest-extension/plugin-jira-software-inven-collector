@@ -10,10 +10,11 @@ _LOGGER = logging.getLogger("spaceone")
 
 
 class IssueManager(JiraBaseManager):
+    cloud_service_group = "Projects"
+    cloud_service_type = "Issue"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cloud_service_group = "Projects"
-        self.cloud_service_type = "Issue"
         self.metadata_path = "metadata/projects/issue.yaml"
         self.project_connector = ProjectConnector()
         self.issue_connector = IssueConnector()

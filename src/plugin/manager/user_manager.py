@@ -10,6 +10,9 @@ _LOGGER = logging.getLogger("spaceone")
 
 
 class MemberManager(JiraBaseManager):
+    cloud_service_group = "Projects"
+    cloud_service_type = "Member"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.cloud_service_group = "Projects"

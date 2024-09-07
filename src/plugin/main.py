@@ -1,4 +1,3 @@
-
 import logging
 
 from spaceone.core.service import *
@@ -127,6 +126,12 @@ def collector_collect(params: dict) -> dict:
         yield from cloud_svc_mgr.collect(
             options=options, secret_data=secret_data, schema=""
         )
+
+    for cloud_service_group in JiraBaseManager.get_all_cloud_service_group():
+        if not cloud_service_group:
+            continue
+
+        yield from JiraBaseManager.collect_metrics(cloud_service_group)
 
 
 @app.route("Job.get_tasks")

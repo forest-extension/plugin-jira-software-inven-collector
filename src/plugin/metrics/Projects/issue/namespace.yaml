@@ -1,0 +1,8 @@
+---
+namespace_id: ns-jira-software-projects-issue
+name: Projects/Issue
+category: ASSET
+resource_type: inventory.CloudService:jira_software.Projects.Issue
+group: jira_software
+icon: https://spaceone-custom-assets.s3.ap-northeast-2.amazonaws.com/console-assets/icons/jira-icon.png"
+version: '1.0'

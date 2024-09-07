@@ -1,0 +1,24 @@
+---
+metric_id: metric-jira-software-projects-issue-count
+name: Project Count
+metric_type: GAUGE
+resource_type: inventory.CloudService:jira_software.Projects.Issue
+query_options:
+  group_by:
+    - key: data.fields.project.name
+      name: Jira Project
+    - key: data.fields.status.name
+      name: Status
+      default: true
+    - key: data.fields.assignee.displayName
+      name: Assignee
+    - key: data.fields.issuetype.name
+      name: Issue Type
+    - key: data.fields.reporter.displayName
+      name: Reporter
+  fields:
+    value:
+      operator: count
+unit: Count
+namespace_id: ns-jira-software-projects-issue
+version: '1.0'

@@ -10,10 +10,11 @@ _LOGGER = logging.getLogger("spaceone")
 
 
 class ProjectManager(JiraBaseManager):
+    cloud_service_group = "Projects"
+    cloud_service_type = "Project"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cloud_service_group = "Projects"
-        self.cloud_service_type = "Project"
         self.metadata_path = "metadata/projects/project.yaml"
         self.project_connector = ProjectConnector()
 
