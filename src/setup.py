@@ -31,6 +31,6 @@ setup(
     license="Apache License 2.0",
     packages=find_packages(),
     install_requires=["spaceone-api", "spaceone-inventory"],
-    package_data={"plugin": ["metadata/*/*.yaml"]},
+    package_data={"plugin": ["metadata/*/*.yaml", "metrics/*/*/*.yaml"]},
     zip_safe=False,
 )
