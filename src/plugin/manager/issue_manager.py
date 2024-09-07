@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import Generator
 
 from plugin.connector.project_connector import ProjectConnector
@@ -73,6 +74,11 @@ class IssueManager(JiraBaseManager):
                 "external_link": f"https://{domain}.atlassian.net/browse/{issue_info['key']}",
             }
 
+            issue_created: str = issue_info.get("fields", {}).get("created")
+            if issue_created:
+                issue_created_display = issue_created.split("T")[0]
+                issue_info["issue_created_display"] = issue_created_display
+
             cloud_service = make_cloud_service(
                 name=issue_info["fields"]["summary"],
                 cloud_service_type=self.cloud_service_type,
@@ -95,3 +101,8 @@ class IssueManager(JiraBaseManager):
                     ]
                 ],
             )
+
+    @staticmethod
+    def convert_datetime(created_at: str) -> str:
+        datetime_obj = datetime.strptime(created_at, "%Y-%m-%d")
+        return datetime_obj.strftime("%Y-%m-%d")

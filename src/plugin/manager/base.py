@@ -65,7 +65,6 @@ class JiraBaseManager(BaseManager):
                         _METRIC_DIR, cloud_service_group, dirname, filename
                     )
                     info = utils.load_yaml_from_file(file_path)
-                    print(file_path)
                     if filename == "namespace.yaml":
                         yield make_response(
                             namespace=info,

@@ -10,12 +10,16 @@ query_options:
     - key: data.fields.status.name
       name: Status
       default: true
+    - key: data.fields.priority.name
+      name: Priority
     - key: data.fields.assignee.displayName
       name: Assignee
     - key: data.fields.issuetype.name
       name: Issue Type
     - key: data.fields.reporter.displayName
       name: Reporter
+    - key: data.issue_created_display
+      name: Created Date
   fields:
     value:
       operator: count

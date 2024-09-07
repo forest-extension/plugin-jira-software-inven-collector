@@ -31,37 +31,12 @@ class JiraBaseConnector(BaseConnector):
         auth = self.get_auth(secret_data)
 
         try:
-            max_results = params.get("maxResults")
-            start_at = params.get("startAt")
-            total_count = params.get("total_count")
-            if max_results and start_at and total_count:
-                for response in self._pagination_with_count(
-                    method, url, headers, auth, params, data
-                ):
-                    yield response
-
-            else:
-                for response in self._pagination(
-                    method, url, headers, auth, params, data
-                ):
-                    yield response
+            for response in self._pagination(method, url, headers, auth, params, data):
+                yield response
 
         except Exception as e:
             _LOGGER.error(f"[dispatch_request] Error {e}")
             raise ERROR_UNKNOWN(message=e)
-
-    @staticmethod
-    def _pagination_with_count(
-        method: str,
-        url: str,
-        headers: dict,
-        auth: HTTPBasicAuth,
-        params: dict,
-        data: dict = None,
-    ) -> list:
-        responses = []
-        while True:
-            print(url, params)
 
     @staticmethod
     def _pagination(
@@ -74,7 +49,6 @@ class JiraBaseConnector(BaseConnector):
     ) -> list:
         responses = []
         while True:
-            print(url, params)
             response = requests.request(
                 method,
                 url,
@@ -88,8 +62,6 @@ class JiraBaseConnector(BaseConnector):
                 response_values = response_json
             else:
                 response_values = response_json.get("values")
-
-            print(response_json)
 
             _LOGGER.debug(
                 f"[dispatch_request] {url} {response.status_code} {response.reason}"
